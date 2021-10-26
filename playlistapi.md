@@ -11,149 +11,105 @@
 - изменение;
 - удаление;
 
-## Подготовка
-
-Для работы с ПО Carrot посредвом API нобходимо запустить в **Carrot Server**.
-
-Для подключения используется WebSocket-соединение, в котором указывается ip-адрес сервера
-и порт подключения.
-
-Порты подключения:
-
-- 24710 - для обмена сообщениями;
-- 24712 - для обмена файлами;
-
-Для обмена сообщениями используется кодировка UTF-8.
-
-## Подключение
-
-1. Установите соединение WebSocket-соединение для обмена сообщениями (например, `ws://localhost:24710`).
-
-В ответ вы получите сообщение вида:
-
-```xml
-<Command CmdGroup="ClientID">
-  <ID>ee4d2052-18c1-478d-8e92-0e7ac24398fe</ID>
-  <ReplicationHosts>192.168.1.203,192.168.1.39</ReplicationHosts>
-  <ReplicationNumber>0</ReplicationNumber>
-</Command>
-```
-
-где:
-
-- `ID` - идентифиактор соединения на стороне сервера. Тип `Guid`.
-- `ReplicationHosts` - список ip-адресов всех серверов (в случае использования резервирования). Тип `String`.
-- `ReplicationNumber` - статус резервирования у подключаенного сервера (0 = master, остальное = slave). Тип `Int`.
-
-2. Установите соединение WebSocket-соединение для обмена файлами (например, `ws://localhost:24710`).
-
-В ответ вы получите сообщение вида:
-
-```xml
-<Command CmdGroup="ClientID">
-  <ID>c3c8bbf2-3562-4853-ad6e-9a56bfd5a1fd</ID>
-</Command>
-```
-
-где:
-
-- `ID` - идентифиактор подключения на стороне сервера. Тип `Guid`.
-
-3. После подключения отправьте информацию о клиентской части подключения.
+## Получение списка плейлистов, хранящихся на сервере
 
 Для этого отправьте на сервер сообщение вида:
 
 ```xml
-<Command CmdGroup="HandShake" MessageId="1">
-  <AppName>Carrot Web Playlist</AppName>
-  <SessionID>e12f42c8-140a-4ca7-aad6-36e5b5cf7e48</SessionID>
+<Command CmdGroup="Playlists" CmdName="GetPlaylists" MessageId="659">
+  <PlaylistGroupId>00000000-0000-0000-0000-000000000000</PlaylistGroupId>
 </Command>
 ```
 
 где:
 
 - `MessageId` - иденификатор сообщения. Тип `long`. Каждое последующее сообщение увеличивает параметр на 1.
-- `AppName` - имя приложения, использующее подключение. Тип `String`.
-- `SessionID` - идентификатор подключения на стороне клиента. Тип `Guid`.
+- `PlaylistGroupId` - иденификатор группы плейлистов. Тип `Guid`. Guid.Empty соответствует корневому разделу.
 
-## Авторизация
-
-1. Отправьте информацию, нобходимую для авторизации.
-
-Для этого отправьте на сервер сообщение вида:
+В ответ вы получите сообщение вида:
 
 ```xml
-<Command CmdGroup="Users" CmdName="Login" MessageId="2">
-  <UserName>admin</UserName>
-  <PassWord>KFlXF0fLFEbYmY2f17tvrw==</PassWord>  
-</Command>
-```
-
-где:
-
-- `MessageId` - иденификатор сообщения. Тип `long`. Каждое последующее сообщение увеличивает параметр на 1.
-- `UserName` - логин. Тип `String`.
-- `PassWord` - пароль. Тип `String`. Передается в зашифрованном виде.
-
-В ответ вы получите сообщение об успешном или неуспешном прохождении авторизации.
-
-Если авторизация прошла успешно, сообщение бует иметь вид:
-
-```xml
-<Result CmdGroup="Users" CmdName="LoginOk" MessageId="2" Token="6c3540c6-a1dd-4496-abf8-b5c95a6281e0">
-  <User>
-    <Id>29108d95-76f4-4309-9ebc-d6545a6c81d6</Id>
-    <Name>Administrator</Name>
-    <Created>17.06.2021 12:32:26</Created>
-    <Changed>17.06.2021 12:32:26</Changed>
-    <IsSystem>true</IsSystem>
-    <Login>admin</Login>
-    <Password>KFlXF0fLFEbYmY2f17tvrw==</Password>
-    <GroupId>9376adbf-fe5c-4acc-b87a-512e6d4c864d</GroupId>
-    <IsAdmin>false</IsAdmin>
-    <FavTemplatesList>
-      <TemplateId>2445d973-02f1-4f31-b23f-afdbcedf042c</TemplateId>
-      <TemplateId>355b3b70-2ab6-415d-b10d-c7c786238f5d</TemplateId>
-      <TemplateId>610c7382-388f-4ee3-8199-c9b5061a489b</TemplateId>
-      <TemplateId>56b959b3-d0f6-47b7-bbed-9c3ef29d54ca</TemplateId>
-    </FavTemplatesList>
-    <FavMediasList>
-      <MediaId>d61f5185-c236-4f58-8c1c-aaafad742536</MediaId>
-      <MediaId>d3256b2b-1ecb-432f-a65e-26aadc73921b</MediaId>
-      <MediaId>adadc280-b99a-443d-a689-1e532501d76d</MediaId>
-      <MediaId>098e1d89-13d2-4895-8364-26f1d138a33f</MediaId>
-    </FavMediasList>
-  </User>
+<Result CmdGroup="Playlists" CmdName="GetPlaylists" MessageId="659">
+  <PlaylistGroups>
+    <ObjectGroup>
+      <Id>9477a1ba-520f-4d8e-a777-4bae961d52b8</Id>
+      <Name>SomeTV</Name>
+      <Created>28.08.2021 7:21:26</Created>
+      <Changed>14.10.2021 12:58:56</Changed>
+      <IsSystem>false</IsSystem>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+    </ObjectGroup>
+    <ObjectGroup>
+      <Id>96f6fcac-0cfc-48b3-80f1-05dfb53fc4c9</Id>
+      <Name>Tests</Name>
+      <Created>31.08.2021 14:42:45</Created>
+      <Changed>06.10.2021 14:55:58</Changed>
+      <IsSystem>false</IsSystem>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+    </ObjectGroup>
+    <ObjectGroup>
+      <Id>e0d38c66-4488-4aeb-bc3d-e2cbb2bf3c0c</Id>
+      <Name>_projects</Name>
+      <Created>08.09.2021 12:05:30</Created>
+      <Changed>08.09.2021 12:05:30</Changed>
+      <IsSystem>false</IsSystem>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+    </ObjectGroup>
+  </PlaylistGroups>
+  <Playlists>
+    <Playlist>
+      <Id>0a3044d6-682f-4b0f-9a23-078998af187b</Id>
+      <Name>Playlist_Name_19</Name>
+      <Created>11.08.2021 13:35:24</Created>
+      <Changed>21.08.2021 8:44:31</Changed>
+      <IsSystem>false</IsSystem>
+      <PlaylistGroupId>00000000-0000-0000-0000-000000000000</PlaylistGroupId>
+      <ScenarioList>
+        <ScenarioId>9bb9773e-4057-45f7-b399-3f0dd65b8e69</ScenarioId>
+        <ScenarioId>f83ab270-dcc4-4f02-bbf8-19bf7a6ba0c5</ScenarioId>
+        <ScenarioId>2798a15d-ffef-4e43-b629-50e52136f999</ScenarioId>
+        <ScenarioId>25963dee-befd-459c-8f55-c25f93162353</ScenarioId>
+        <ScenarioId>0e5abfd6-f158-4e8f-b01a-20f72eca776b</ScenarioId>
+      </ScenarioList>
+    </Playlist>
+    <Playlist>
+      <Id>17f2435c-f61e-46b6-8890-c516d9bacb24</Id>
+      <Name>ABC</Name>
+      <Created>06.09.2021 18:34:09</Created>
+      <Changed>08.09.2021 12:03:22</Changed>
+      <IsSystem>false</IsSystem>
+      <PlaylistGroupId>00000000-0000-0000-0000-000000000000</PlaylistGroupId>
+      <ScenarioList>
+        <ScenarioId>4e71648c-8239-49a6-9813-7ed5e8cf5e8b</ScenarioId>
+        <ScenarioId>10984755-2cf3-4518-9eb3-ac507cc58ca5</ScenarioId>
+      </ScenarioList>
+    </Playlist>
+    <Playlist>
+      <Id>4af269ee-8538-41bb-948d-d317acd6d8c0</Id>
+      <Name>Some_Playlist</Name>
+      <Created>14.08.2021 14:32:24</Created>
+      <Changed>14.08.2021 14:33:55</Changed>
+      <IsSystem>false</IsSystem>
+      <PlaylistGroupId>00000000-0000-0000-0000-000000000000</PlaylistGroupId>
+      <ScenarioList>
+        <ScenarioId>e982d869-616b-4da7-9218-561451c9d51f</ScenarioId>
+      </ScenarioList>
+    </Playlist>   
+  </Playlists>
 </Result>
 ```
 
 где:
 
 - `MessageId` - иденификатор сообщения. Тип `long`. Совпадает с идентификатором сообщения-запроса.
-- `Token` - идентификатор пользователя в текущем подключении. Тип `Guid`.
-- `Id` - идентификатор учетной записи. Тип `Guid`.
-- `Name` - имя четной записи. Тип `String`.
-- `Created` - время создания учетной записи. Тип `DateTime`.
-- `Changed` - время последнего изменения учетной записи. Тип `DateTime`.
-- `IsSystem` - идентификатор системной учетной записи. Тип `Boolean`. Если `true`, то данную учетную запись нельзя удалить.
-- `Login` - логин для авторизации. Тип `String`.
-- `Password` - пароль для авторизации. Тип `String`. Зашифрован.
-- `GroupId` - идентификатор группы, к которой принаделжит учетная запись. Тип `Guid`.
-- `IsAdmin` - идентификатор учетной записи администратора. Тип `Boolean`.
-- `FavTemplatesList` - список избранных шаблонов для быстрого доступа.
-- `TemplateId` - идентификатор избранного шаблона.
-- `FavMediasList` - список избранных медиа файлов для быстрого доступа.
-- `MediaId` - идентификатор избранного медиа файла.
-
-Если авторизация прошла неуспешно, сообщение бует иметь вид:
-
-```xml
-<Result CmdGroup="Users" CmdName="LoginError" MessageId="2">
-  <Message>Incorrect Password!</Message>
-</Result>
-```
-
-где:
-
-- `MessageId` - иденификатор сообщения. Тип `long`. Совпадает с идентификатором сообщения-запроса.
-- `Message` - описание ошибки.
+- `PlaylistGroups` - список дочерних групп запрашиваемой группы.
+- `Id` - иденификатор объекта. Тип `Guid`.
+- `Name` - имя объекта. Тип `String`.
+- `Created` - время создания объекта. Тип `DateTime`.
+- `Changed` - время последнего изменения объекта. Тип `DateTime`.
+- `IsSystem` - идентификатор системного объекта. Тип `Boolean`. Если `true`, то данный объект нельзя удалить.
+- `ParentId` - идентификатор родительской группы.
+- `Playlists` - список плейлистов запрашиваемой группы.
+- `PlaylistGroupId` - идентификатор группы плейлистов, к которой относится плейлист.
+- `ScenarioList` - список историй данного плейлиста.
+- `ScenarioId` - идентификатор истории. Тип `Guid`.
