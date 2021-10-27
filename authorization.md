@@ -6,10 +6,21 @@
 
 Для этого отправьте на сервер сообщение вида:
 
+* A\. В случае, если используется шифрование пароля:
+
 ```xml
 <Command CmdGroup="Users" CmdName="Login" MessageId="2">
   <UserName>admin</UserName>
   <PassWord>KFlXF0fLFEbYmY2f17tvrw==</PassWord>  
+</Command>
+```
+
+* B\. В случае, если шифрование пароля не используется:
+
+```xml
+<Command CmdGroup="Users" CmdName="LoginUnsecure" MessageId="2">
+  <UserName>admin</UserName>
+  <PassWord>adminPassword</PassWord>  
 </Command>
 ```
 
