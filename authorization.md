@@ -2,33 +2,33 @@
 
 > Здесь и далее нерасшифрованные поля не участвуют в работе API и используются внутренними компонентами Carrot
 
-1. Отправьте информацию, нобходимую для авторизации.
+Отправьте информацию, нобходимую для авторизации.
 
 Для этого отправьте на сервер сообщение вида:
 
 * A\. В случае, если используется шифрование пароля:
 
-```xml
-<Command CmdGroup="Users" CmdName="Login" MessageId="2">
-  <UserName>admin</UserName>
-  <PassWord>KFlXF0fLFEbYmY2f17tvrw==</PassWord>  
-</Command>
-```
+    ```xml
+    <Command CmdGroup="Users" CmdName="Login" MessageId="2">
+      <UserName>admin</UserName>
+      <PassWord>KFlXF0fLFEbYmY2f17tvrw==</PassWord>  
+    </Command>
+    ```
 
 * B\. В случае, если шифрование пароля не используется:
 
-```xml
-<Command CmdGroup="Users" CmdName="LoginUnsecure" MessageId="2">
-  <UserName>admin</UserName>
-  <PassWord>adminPassword</PassWord>  
-</Command>
-```
+    ```xml
+    <Command CmdGroup="Users" CmdName="LoginUnsecure" MessageId="2">
+      <UserName>admin</UserName>
+      <PassWord>adminPassword</PassWord>  
+    </Command>
+    ```
 
-где:
+    где:
 
-- `MessageId` - иденификатор сообщения. Тип `long`. В каждом последующем сообщении клиент должен увеличивать параметр на 1.
-- `UserName` - логин. Тип `String`.
-- `PassWord` - пароль. Тип `String`.
+    - `MessageId` - иденификатор сообщения. Тип `long`. В каждом последующем    сообщении клиент должен увеличивать параметр на 1.
+    - `UserName` - логин. Тип `String`.
+    - `PassWord` - пароль. Тип `String`.
 
 В ответ вы получите сообщение об успешном или неуспешном прохождении авторизации.
 
